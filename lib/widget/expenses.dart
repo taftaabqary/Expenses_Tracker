@@ -15,6 +15,7 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
+
   final List<Expense> _registeredExpenses = [
     Expense(
         title: 'Flutter Course',
@@ -61,6 +62,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _addNewExpense() {
     showModalBottomSheet(
+        useSafeArea: true,
         isScrollControlled: true,
         context: context,
         builder: (ctx) => NewExpenses(saveExpense: _saveNewExpenses)
@@ -69,8 +71,10 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
-    Widget contentExpenses = const Center(child: Text('No Expenses found, try to adding some!'));
+    final widthScreen = MediaQuery.of(context).size.width;
 
+    Widget contentExpenses = const Center(child: Text('No Expenses found, try to adding some!'));
+  
     if(_registeredExpenses.isNotEmpty) {
       contentExpenses = ExpenseList(expenses: _registeredExpenses, onItemDismissed: _removeExpense);
     }
@@ -84,14 +88,27 @@ class _ExpensesState extends State<Expenses> {
                 icon: const Icon(Icons.add)
             )],
         ),
-        body: Column(
+        body: (widthScreen < 600)
+            ?
+        Column(
           children: [
             Chart(expenses: _registeredExpenses),
             Expanded(
                 child: contentExpenses
             )
           ],
-        ),
+        )
+            :
+        Row(
+          children: [
+            Expanded(
+                child: Chart(expenses: _registeredExpenses)
+            ),
+            Expanded(
+                child: contentExpenses
+            )
+          ],
+        )
       );
   }
 }
