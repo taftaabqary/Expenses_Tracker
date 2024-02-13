@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:expenses_tracker/models/expense.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NewExpenses extends StatefulWidget {
@@ -32,6 +35,42 @@ class _NewExpensesState extends State<NewExpenses> {
     });
   }
 
+  void _showDialog() {
+    if(Platform.isIOS) {
+      showCupertinoDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Invalid Value Form'),
+            content: const Text(
+                'Please check again the value of title expenses, amount expenses, date expenses, and category expenses'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Okay'))
+            ],
+          )
+      );
+    } else {
+      showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Invalid Value Form'),
+            content: const Text(
+                'Please check again the value of title expenses, amount expenses, date expenses, and category expenses'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Okay'))
+            ],
+          )
+      );
+    }
+  }
+
   void showFormAlert() {
     final amountValue = _amountController.text;
     final amountParsed = double.tryParse(amountValue);
@@ -39,20 +78,7 @@ class _NewExpensesState extends State<NewExpenses> {
     if (_titleController.text.trim().isEmpty ||
         invalidAmount ||
         datePickerValue == null) {
-      showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                title: const Text('Invalid Value Form'),
-                content: const Text(
-                    'Please check again the value of title expenses, amount expenses, date expenses, and category expenses'),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Okay'))
-                ],
-              ));
+      _showDialog();
       return;
     }
 
@@ -60,7 +86,8 @@ class _NewExpensesState extends State<NewExpenses> {
         title: _titleController.text,
         amount: amountParsed,
         date: datePickerValue!,
-        category: _selectedCategory!);
+        category: _selectedCategory!
+    );
 
     widget.saveExpense(newExpenses);
   }
